@@ -1,0 +1,1 @@
+Folder for output in various formas: tables, statistics (in simple text files), graphs, html files

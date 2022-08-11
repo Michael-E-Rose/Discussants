@@ -1,0 +1,32 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{4}{D{.}{.}{-1}}}
+\toprule
+                    	&\multicolumn{1}{c}{(1)} 	&\multicolumn{1}{c}{(2)} 	&\multicolumn{1}{c}{(3)} 	&\multicolumn{1}{c}{(4)} \\
+                    	&\multicolumn{1}{c}{log(1+Total citations)}	&\multicolumn{1}{c}{log(1+Total citations)}	&\multicolumn{1}{c}{log(1+Total citations)}	&\multicolumn{1}{c}{log(1+Total citations)}\\
+\midrule
+Discussion          	&          0.260\sym{*}  	&          0.108         	&        -0.0294         	&        -0.0146         \\
+                    	&        (0.056)         	&        (0.392)         	&        (0.833)         	&        (0.889)         \\
+\addlinespace
+Constant            	&          3.367\sym{***}	&          3.417\sym{***}	&          3.410\sym{***}	&          4.482\sym{***}\\
+                    	&        (0.000)         	&        (0.000)         	&        (0.000)         	&        (0.000)         \\
+\addlinespace
+Paper controls      	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Author controls     	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Group control       	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Publication year FE 	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+JEL categories      	&                        	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Journal control     	&                        	&                        	&\multicolumn{1}{c}{$\checkmark$}         	&                        \\
+\addlinespace
+Journal FE          	&                        	&                        	&                        	&\multicolumn{1}{c}{$\checkmark$}         \\
+\midrule
+\textit{N}          	&            596         	&            596         	&            576         	&            596         \\
+R$^{2}$             	&          0.359         	&          0.386         	&          0.427         	&          0.584         \\
+\bottomrule
+\end{tabular}
+}

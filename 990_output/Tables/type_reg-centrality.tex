@@ -1,0 +1,47 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{3}{D{.}{.}{-1}}}
+\toprule
+                    	&\multicolumn{1}{c}{(1)} 	&\multicolumn{1}{c}{(2)} 	&\multicolumn{1}{c}{(3)} \\
+                    	&\multicolumn{1}{c}{Top (Econ+Finance)}	&\multicolumn{1}{c}{SJR} 	&\multicolumn{1}{c}{log(1+Total citations)}\\
+\midrule
+main                	&                        	&                        	&                        \\
+Discussant Euclid   	&      0.0000171         	&        0.00194\sym{***}	&       0.000468         \\
+                    	&        (0.969)         	&        (0.010)         	&        (0.233)         \\
+\addlinespace
+7-15                	&          0.155         	&         -0.689         	&        -0.0947         \\
+                    	&        (0.567)         	&        (0.411)         	&        (0.736)         \\
+\addlinespace
+<2                  	&          0.248         	&          0.681         	&         -0.146         \\
+                    	&        (0.343)         	&        (0.437)         	&        (0.590)         \\
+\addlinespace
+>15                 	&          0.604         	&         -0.477         	&         -0.360         \\
+                    	&        (0.156)         	&        (0.443)         	&        (0.241)         \\
+\addlinespace
+Female Discussant 	&         -0.666         	&         -1.033         	&        -0.0679         \\
+                    	&        (0.225)         	&        (0.217)         	&        (0.736)         \\
+\addlinespace
+coauth_neighborhood_45_dis	&        0.00383         	&         0.0133         	&       -0.00386\sym{*}  \\
+                    	&        (0.485)         	&        (0.525)         	&        (0.099)         \\
+\addlinespace
+informal_neighborhood_45_dis	&       0.000272         	&        0.00183         	&      -0.000865         \\
+                    	&        (0.668)         	&        (0.513)         	&        (0.181)         \\
+\addlinespace
+Constant            	&         -1.921         	&          3.101\sym{*}  	&          4.244\sym{***}\\
+                    	&        (0.146)         	&        (0.061)         	&        (0.000)         \\
+\addlinespace
+Group FE            	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Paper controls      	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Author controls     	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Journal control     	&                        	&                        	&\multicolumn{1}{c}{$\checkmark$}         \\
+\midrule
+\textit{N}          	&            348         	&            344         	&            344         \\
+R$^{2}$             	&                        	&          0.390         	&          0.380         \\
+Pseudo R$^{2}$      	&          0.371         	&                        	&                        \\
+AIC                 	&          306.6         	&         1980.8         	&          952.3         \\
+\bottomrule
+\end{tabular}
+}

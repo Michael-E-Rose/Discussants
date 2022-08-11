@@ -1,0 +1,31 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{3}{D{.}{.}{-1}}}
+\toprule
+                    	&\multicolumn{1}{c}{(1)} 	&\multicolumn{1}{c}{(2)} 	&\multicolumn{1}{c}{(3)} \\
+                    	&\multicolumn{1}{c}{Top (Econ+Finance)}	&\multicolumn{1}{c}{SJR} 	&\multicolumn{1}{c}{log(1+Total citations)}\\
+\midrule
+main                	&                        	&                        	&                        \\
+Discussion          	&          0.904\sym{***}	&          1.479         	&          0.422\sym{*}  \\
+                    	&        (0.009)         	&        (0.172)         	&        (0.067)         \\
+\addlinespace
+Constant            	&         -3.653\sym{***}	&         -0.237         	&          2.334\sym{***}\\
+                    	&        (0.001)         	&        (0.846)         	&        (0.003)         \\
+\addlinespace
+Paper controls      	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Author controls     	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Group control       	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Publication year FE 	&                        	&                        	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Journal control     	&                        	&                        	&\multicolumn{1}{c}{$\checkmark$}         \\
+\midrule
+\textit{N}          	&            280         	&            272         	&            272         \\
+R$^{2}$             	&                        	&          0.231         	&          0.417         \\
+Pseudo R$^{2}$      	&          0.145         	&                        	&                        \\
+AIC                 	&          337.1         	&         1565.6         	&          716.2         \\
+\bottomrule
+\end{tabular}
+}

@@ -1,0 +1,1 @@
+[`genderize.csv`](genderize.csv) lists the gender of all discussants in the NBER sample.  Data is obtained from https://genderize.io/ in May 2021 and includes a their estimated probability and their number of examined data entries.

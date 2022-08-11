@@ -1,0 +1,34 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{D{.}{.}{-1}}}
+\toprule
+                    	&\multicolumn{1}{c}{(1)} 	&\multicolumn{1}{c}{(2)} 	&\multicolumn{1}{c}{(3)} 	&\multicolumn{1}{c}{(4)} 	&\multicolumn{1}{c}{(5)} 	&\multicolumn{1}{c}{(6)} \\
+                    	&\multicolumn{1}{c}{Top (Econ+Finance)}	&\multicolumn{1}{c}{Top (Econ+Finance)}	&\multicolumn{1}{c}{SJR} 	&\multicolumn{1}{c}{SJR} 	&\multicolumn{1}{c}{log(1+Total citations)}	&\multicolumn{1}{c}{log(1+Total citations)}\\
+\midrule
+main                	&                        	&                        	&                        	&                        	&                        	&                        \\
+Discussion          	&          1.231\sym{***}	&          1.214\sym{***}	&          1.750\sym{**} 	&          1.743\sym{***}	&         0.0931         	&         0.0925         \\
+                    	&        (0.006)         	&        (0.005)         	&        (0.010)         	&        (0.009)         	&        (0.431)         	&        (0.436)         \\
+\addlinespace
+Readability         	&                        	&        -0.0850         	&                        	&        -0.0999         	&                        	&        -0.0121         \\
+                    	&                        	&        (0.205)         	&                        	&        (0.361)         	&                        	&        (0.599)         \\
+\addlinespace
+Constant            	&         -2.753\sym{**} 	&         -1.469         	&          0.470         	&          2.068         	&          3.405\sym{***}	&          3.598\sym{***}\\
+                    	&        (0.043)         	&        (0.372)         	&        (0.736)         	&        (0.401)         	&        (0.000)         	&        (0.000)         \\
+\addlinespace
+Paper controls      	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Author controls     	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Group control       	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Publication year FE 	&                        	&                        	&                        	&                        	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Journal control     	&                        	&                        	&                        	&                        	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\midrule
+\textit{N}          	&            329         	&            329         	&            322         	&            322         	&            322         	&            322         \\
+R$^{2}$             	&                        	&                        	&          0.271         	&          0.274         	&          0.446         	&          0.447         \\
+Pseudo R$^{2}$      	&          0.234         	&          0.241         	&                        	&                        	&                        	&                        \\
+AIC                 	&          370.3         	&          367.3         	&         1889.2         	&         1888.1         	&          866.5         	&          866.2         \\
+\bottomrule
+\end{tabular}
+}

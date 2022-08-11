@@ -1,0 +1,2 @@
+- [`manuscripts.csv`](manuscripts.csv) is the list of all presented manuscripts (with known title) including discussant information, author affiliation ranks, readability scores, bibliometrics, yearly citation counts, group dummies and JEL dummies.
+- [`unpublished.csv`](unpublished.csv) is the automatically generated list of presented manuscripts (with known titles) which have not been published according to our information.

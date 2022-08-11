@@ -1,0 +1,50 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{D{.}{.}{-1}}}
+\toprule
+                    	&\multicolumn{1}{c}{(1)} 	&\multicolumn{1}{c}{(2)} 	&\multicolumn{1}{c}{(3)} 	&\multicolumn{1}{c}{(4)} 	&\multicolumn{1}{c}{(5)} 	&\multicolumn{1}{c}{(6)} \\
+                    	&\multicolumn{1}{c}{Top (Econ+Finance)}	&\multicolumn{1}{c}{Top (Econ+Finance)}	&\multicolumn{1}{c}{SJR} 	&\multicolumn{1}{c}{SJR} 	&\multicolumn{1}{c}{log(1+Total citations)}	&\multicolumn{1}{c}{log(1+Total citations)}\\
+\midrule
+main                	&                        	&                        	&                        	&                        	&                        	&                        \\
+Discussant Euclid   	&       0.000176         	&       0.000204         	&        0.00234\sym{***}	&        0.00240\sym{***}	&       0.000377         	&       0.000336         \\
+                    	&        (0.572)         	&        (0.691)         	&        (0.007)         	&        (0.006)         	&        (0.306)         	&        (0.407)         \\
+\addlinespace
+7-15                	&          0.262         	&         0.0253         	&         -0.850         	&         -1.113         	&        0.00751         	&        -0.0298         \\
+                    	&        (0.294)         	&        (0.934)         	&        (0.286)         	&        (0.136)         	&        (0.980)         	&        (0.919)         \\
+\addlinespace
+<2                  	&          0.351         	&          0.223         	&          0.637         	&          0.687         	&         0.0372         	&        -0.0434         \\
+                    	&        (0.131)         	&        (0.394)         	&        (0.361)         	&        (0.386)         	&        (0.901)         	&        (0.871)         \\
+\addlinespace
+>15                 	&          0.462         	&          0.411         	&         -0.880         	&         -0.949         	&         -0.163         	&         -0.265         \\
+                    	&        (0.180)         	&        (0.386)         	&        (0.156)         	&        (0.164)         	&        (0.627)         	&        (0.431)         \\
+\addlinespace
+Female Discussant 	&         -0.783         	&         -0.704         	&         -1.828\sym{*}  	&         -1.285         	&         0.0602         	&        -0.0512         \\
+                    	&        (0.228)         	&        (0.220)         	&        (0.076)         	&        (0.131)         	&        (0.781)         	&        (0.792)         \\
+\addlinespace
+Discussant          	&       -0.00183         	&                        	&       -0.00279\sym{**} 	&                        	&      -0.000500         	&                        \\
+affiliation rank    	&        (0.118)         	&                        	&        (0.027)         	&                        	&        (0.472)         	&                        \\
+\addlinespace
+Discussant is       	&                        	&         -0.394         	&                        	&          0.431         	&                        	&          0.238         \\
+practitioner      	&                        	&        (0.496)         	&                        	&        (0.684)         	&                        	&        (0.279)         \\
+\addlinespace
+Discussant is       	&                        	&          0.348         	&                        	&          1.068\sym{***}	&                        	&        -0.0720         \\
+editor            	&                        	&        (0.144)         	&                        	&        (0.010)         	&                        	&        (0.325)         \\
+\addlinespace
+Constant            	&         -1.564         	&         -1.998         	&          3.148\sym{**} 	&          2.741         	&          4.080\sym{***}	&          4.164\sym{***}\\
+                    	&        (0.178)         	&        (0.116)         	&        (0.050)         	&        (0.130)         	&        (0.000)         	&        (0.000)         \\
+\addlinespace
+Group FE            	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Paper controls      	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Author controls     	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Journal control     	&                        	&                        	&                        	&                        	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\midrule
+\textit{N}          	&            315         	&            348         	&            312         	&            344         	&            312         	&            344         \\
+R$^{2}$             	&                        	&                        	&          0.365         	&          0.393         	&          0.393         	&          0.373         \\
+Pseudo R$^{2}$      	&          0.345         	&          0.374         	&                        	&                        	&                        	&                        \\
+AIC                 	&          286.6         	&          305.3         	&         1801.8         	&         1978.7         	&          859.5         	&          956.5         \\
+\bottomrule
+\end{tabular}
+}

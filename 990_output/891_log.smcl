@@ -1,0 +1,1404 @@
+{smcl}
+{com}{sf}{ul off}{txt}{.-}
+      name:  {res}<unnamed>
+       {txt}log:  {res}E:\PERSONS\Michael Rose\discussants\990_output\891_log.smcl
+  {txt}log type:  {res}smcl
+ {txt}opened on:  {res}14 May 2022, 21:40:18
+{txt}
+{com}. 
+. * Read in
+. import delimited ".\880_paper_samples\main.csv", clear
+{res}{txt}(encoding automatically selected: ISO-8859-1)
+{res}{text}(154 vars, 846 obs)
+
+{com}. 
+. drop if type != "Journal"
+{txt}(250 observations deleted)
+
+{com}. 
+. * Compute variables
+. encode statusmin_auth, gen(statusmin_a)
+{txt}
+{com}. encode statusmax_auth, gen(statusmax_a)
+{txt}
+{com}. encode status_dis, gen(status_d)
+{txt}
+{com}. encode journal, gen(journal_f)
+{txt}
+{com}. 
+. gen ln_sjr = ln(sjr)
+{txt}(20 missing values generated)
+
+{com}. gen ln_avg_citations = ln(avg_citations)
+{txt}(20 missing values generated)
+
+{com}. gen ln_hindex = ln(hindex)
+{txt}(20 missing values generated)
+
+{com}. gen ln_total_citations = ln(1+total_citations)
+{txt}
+{com}. gen asinh_total_citations = asinh(total_citations)
+{txt}
+{com}. gen top_field = top_g + top_e
+{txt}
+{com}. gen top = top_econ + top_finance
+{txt}
+{com}. 
+. gen group_main = group
+{txt}
+{com}. replace group_main = "RISK" if group == "AP-RISK"
+{txt}(2 real changes made)
+
+{com}. replace group_main = "RISK" if group == "CF-RISK"
+{txt}(1 real change made)
+
+{com}. replace group_main = "IFM" if group == "EFEL-IFM"
+{txt}(3 real changes made)
+
+{com}. 
+. * Label variables
+. label variable has_discussion "Discussion"
+{txt}
+{com}. label variable pres_gunningfog "Readability"
+{txt}
+{com}. 
+. label variable top_e "Top (E)"
+{txt}
+{com}. label variable top_g "Top (G)"
+{txt}
+{com}. label variable top_f "Top (F)"
+{txt}
+{com}. label variable top_field "Top (Field)"
+{txt}
+{com}. label variable top_finance "Top (Finance)"
+{txt}
+{com}. label variable top_econ "Top (Econ)"
+{txt}
+{com}. label variable top "Top (Econ+Finance)"
+{txt}
+{com}. label variable sjr "SJR"
+{txt}
+{com}. label variable ln_sjr "log(SJR)"
+{txt}
+{com}. label variable avg_citations "Avg. citations"
+{txt}
+{com}. label variable ln_avg_citations "log(Avg. citations)"
+{txt}
+{com}. label variable hindex "h-index"
+{txt}
+{com}. label variable ln_hindex "log(h-index)"
+{txt}
+{com}. label variable total_citations "Total citations"
+{txt}
+{com}. label variable ln_total_citations "log(1+Total citations)"
+{txt}
+{com}. label variable asinh_total_citations "asinh(Total citations)"
+{txt}
+{com}. 
+. label variable euclid_dis "Discussant Euclid"
+{txt}
+{com}. label variable status_d "Discussant Experience"
+{txt}
+{com}. label variable female_dis "Female Discussant"
+{txt}
+{com}. label variable tilburg_rank_weighted_dis "Discussant affiliation rank"
+{txt}
+{com}. label variable editor_dis "Discussant is editor"
+{txt}
+{com}. label variable practitioner_dis "Discussant is practitioner"
+{txt}
+{com}. 
+. * Main regressions
+. ** Top journals
+. eststo: qui logit top_finance i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, vce(cluster group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui logit top_finance i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, vce(cluster group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, vce(cluster group)
+{txt}({res}est3{txt} stored)
+
+{com}. eststo: qui logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, vce(cluster group)
+{txt}({res}est4{txt} stored)
+
+{com}. esttab using ./990_output/Tables/discussion_reg-class, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2_p aic, labels("\textit{c -(}N{c )-}" "Pseudo R$^{c -(}2{c )-}$" "AIC")) ///
+>         wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Paper controls=num_pages" "Author controls=euclid_auth" "Group control=euclidmean_group" "JEL categories=jel_*", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/discussion_reg-class.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. 
+. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         logit top_finance i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, vce(cluster group)
+{res}{txt}(running {bf:logit} on estimation sample)
+
+note: {bf:5.num_auth} != 0 predicts failure perfectly;
+      {bf:5.num_auth} omitted and 3 obs not used.
+
+{res}{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-341.71194}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-259.17498}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-246.41205}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-245.78739}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-245.78391}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-245.78391}  
+{res}
+{txt}{col 1}Logistic regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:593}
+{txt}{col 57}{lalign 13:{help j_robustsingular##|_new:Wald chi2(11)}}{col 70} = {res}{ralign 6:.}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:.}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-245.78391}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.2807}
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}     top_finance{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      z{col 50}   P>|z|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2}-.1099246{col 30}{space 2} .3066486{col 41}{space 1}   -0.36{col 50}{space 3}0.720{col 58}{space 4}-.7109447{col 71}{space 3} .4910956
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} .3099171{col 30}{space 2} .3018892{col 41}{space 1}    1.03{col 50}{space 3}0.305{col 58}{space 4}-.2817749{col 71}{space 3}  .901609
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}   .17817{col 30}{space 2} .4467095{col 41}{space 1}    0.40{col 50}{space 3}0.690{col 58}{space 4}-.6973646{col 71}{space 3} 1.053705
+{txt}{space 14}5  {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (empty)
+{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2} .0506637{col 30}{space 2}  .012633{col 41}{space 1}    4.01{col 50}{space 3}0.000{col 58}{space 4} .0259035{col 71}{space 3}  .075424
+{txt}{space 13}age {c |}{col 18}{res}{space 2}-.1521913{col 30}{space 2} .0756688{col 41}{space 1}   -2.01{col 50}{space 3}0.044{col 58}{space 4}-.3004994{col 71}{space 3}-.0038832
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2} .0016001{col 30}{space 2}  .007463{col 41}{space 1}    0.21{col 50}{space 3}0.830{col 58}{space 4}-.0130271{col 71}{space 3} .0162273
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2} .0004149{col 30}{space 2} .0001631{col 41}{space 1}    2.54{col 50}{space 3}0.011{col 58}{space 4} .0000952{col 71}{space 3} .0007347
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-.2768362{col 30}{space 2} .2878787{col 41}{space 1}   -0.96{col 50}{space 3}0.336{col 58}{space 4} -.841068{col 71}{space 3} .2873957
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}-.4363635{col 30}{space 2} .4463746{col 41}{space 1}   -0.98{col 50}{space 3}0.328{col 58}{space 4}-1.311242{col 71}{space 3} .4385146
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-1.466543{col 30}{space 2} .6449825{col 41}{space 1}   -2.27{col 50}{space 3}0.023{col 58}{space 4}-2.730685{col 71}{space 3}-.2024005
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-.1191257{col 30}{space 2}  .499024{col 41}{space 1}   -0.24{col 50}{space 3}0.811{col 58}{space 4}-1.097195{col 71}{space 3} .8589433
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}  .421661{col 30}{space 2} .5746651{col 41}{space 1}    0.73{col 50}{space 3}0.463{col 58}{space 4}-.7046619{col 71}{space 3} 1.547984
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-.7079256{col 30}{space 2} .3679379{col 41}{space 1}   -1.92{col 50}{space 3}0.054{col 58}{space 4}-1.429071{col 71}{space 3} .0132193
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2}   3.3995{col 30}{space 2} .5855502{col 41}{space 1}    5.81{col 50}{space 3}0.000{col 58}{space 4} 2.251842{col 71}{space 3} 4.547157
+{txt}euclidmean_group {c |}{col 18}{res}{space 2} .0043479{col 30}{space 2} .0068849{col 41}{space 1}    0.63{col 50}{space 3}0.528{col 58}{space 4}-.0091462{col 71}{space 3} .0178421
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2}-5.012483{col 30}{space 2} 1.199115{col 41}{space 1}   -4.18{col 50}{space 3}0.000{col 58}{space 4}-7.362705{col 71}{space 3}-2.662261
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{p2colset 7 16 20 2}{...}
+
+{p2col :Command:}{res:logit top_finance i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, vce(cluster group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2}   3.3995{col 27}     34{col 35}   1022{col 43} 0.0333{col 51} 0.0056{col 59}  .023147{col 69}{space 1} .0461804
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         logit top_finance i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, vce(cluster group)
+{res}{txt}(running {bf:logit} on estimation sample)
+
+note: {bf:5.num_auth} != 0 predicts failure perfectly;
+      {bf:5.num_auth} omitted and 3 obs not used.
+
+note: {bf:jel_i} != 0 predicts failure perfectly;
+      {bf:jel_i} omitted and 7 obs not used.
+
+note: {bf:jel_p} != 0 predicts failure perfectly;
+      {bf:jel_p} omitted and 6 obs not used.
+
+note: {bf:jel_k} omitted because of collinearity.
+{res}{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-337.69178}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-206.55211}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-182.98978}  
+Iteration 3:{space 3}log pseudolikelihood = {res: -181.0883}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-181.08156}  
+Iteration 5:{space 3}log pseudolikelihood = {res:-181.08156}  
+{res}
+{txt}{col 1}Logistic regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:580}
+{txt}{col 57}{lalign 13:{help j_robustsingular##|_new:Wald chi2(11)}}{col 70} = {res}{ralign 6:.}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:.}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-181.08156}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.4638}
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}     top_finance{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      z{col 50}   P>|z|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2} .3315629{col 30}{space 2} .4239629{col 41}{space 1}    0.78{col 50}{space 3}0.434{col 58}{space 4}-.4993891{col 71}{space 3} 1.162515
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} .5289133{col 30}{space 2} .4015686{col 41}{space 1}    1.32{col 50}{space 3}0.188{col 58}{space 4}-.2581467{col 71}{space 3} 1.315973
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}-.0574441{col 30}{space 2} .5072824{col 41}{space 1}   -0.11{col 50}{space 3}0.910{col 58}{space 4}-1.051699{col 71}{space 3} .9368111
+{txt}{space 14}5  {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (empty)
+{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2} .0543692{col 30}{space 2} .0166805{col 41}{space 1}    3.26{col 50}{space 3}0.001{col 58}{space 4} .0216761{col 71}{space 3} .0870623
+{txt}{space 13}age {c |}{col 18}{res}{space 2}-.0871052{col 30}{space 2} .1541969{col 41}{space 1}   -0.56{col 50}{space 3}0.572{col 58}{space 4}-.3893256{col 71}{space 3} .2151152
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2}-.0042099{col 30}{space 2} .0130277{col 41}{space 1}   -0.32{col 50}{space 3}0.747{col 58}{space 4}-.0297438{col 71}{space 3}  .021324
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2} .0004581{col 30}{space 2} .0001584{col 41}{space 1}    2.89{col 50}{space 3}0.004{col 58}{space 4} .0001476{col 71}{space 3} .0007686
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-.1450621{col 30}{space 2} .4361125{col 41}{space 1}   -0.33{col 50}{space 3}0.739{col 58}{space 4}-.9998269{col 71}{space 3} .7097026
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}-.6269591{col 30}{space 2} .5004221{col 41}{space 1}   -1.25{col 50}{space 3}0.210{col 58}{space 4}-1.607768{col 71}{space 3} .3538502
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-1.636244{col 30}{space 2} .7178741{col 41}{space 1}   -2.28{col 50}{space 3}0.023{col 58}{space 4}-3.043251{col 71}{space 3}-.2292363
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2} .2256842{col 30}{space 2} .6640856{col 41}{space 1}    0.34{col 50}{space 3}0.734{col 58}{space 4}  -1.0759{col 71}{space 3} 1.527268
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2} 1.197321{col 30}{space 2} .5939035{col 41}{space 1}    2.02{col 50}{space 3}0.044{col 58}{space 4} .0332918{col 71}{space 3} 2.361351
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-.6188976{col 30}{space 2}  .427886{col 41}{space 1}   -1.45{col 50}{space 3}0.148{col 58}{space 4}-1.457539{col 71}{space 3} .2197436
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2} 2.938554{col 30}{space 2} .8227913{col 41}{space 1}    3.57{col 50}{space 3}0.000{col 58}{space 4} 1.325913{col 71}{space 3} 4.551195
+{txt}euclidmean_group {c |}{col 18}{res}{space 2}-.0025161{col 30}{space 2}  .003138{col 41}{space 1}   -0.80{col 50}{space 3}0.423{col 58}{space 4}-.0086664{col 71}{space 3} .0036343
+{txt}{space 11}jel_c {c |}{col 18}{res}{space 2}-.3857408{col 30}{space 2} .7062157{col 41}{space 1}   -0.55{col 50}{space 3}0.585{col 58}{space 4}-1.769898{col 71}{space 3} .9984164
+{txt}{space 11}jel_d {c |}{col 18}{res}{space 2} -1.02538{col 30}{space 2} .4584039{col 41}{space 1}   -2.24{col 50}{space 3}0.025{col 58}{space 4}-1.923835{col 71}{space 3}-.1269248
+{txt}{space 11}jel_e {c |}{col 18}{res}{space 2}-.2771706{col 30}{space 2} .3389281{col 41}{space 1}   -0.82{col 50}{space 3}0.413{col 58}{space 4}-.9414574{col 71}{space 3} .3871162
+{txt}{space 11}jel_f {c |}{col 18}{res}{space 2}-1.607043{col 30}{space 2} .3757533{col 41}{space 1}   -4.28{col 50}{space 3}0.000{col 58}{space 4}-2.343506{col 71}{space 3}-.8705799
+{txt}{space 11}jel_g {c |}{col 18}{res}{space 2} 2.185842{col 30}{space 2} .3931234{col 41}{space 1}    5.56{col 50}{space 3}0.000{col 58}{space 4} 1.415335{col 71}{space 3}  2.95635
+{txt}{space 11}jel_h {c |}{col 18}{res}{space 2}-.1491765{col 30}{space 2} .6665853{col 41}{space 1}   -0.22{col 50}{space 3}0.823{col 58}{space 4} -1.45566{col 71}{space 3} 1.157307
+{txt}{space 11}jel_i {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (omitted)
+{space 11}jel_j {c |}{col 18}{res}{space 2}-2.140114{col 30}{space 2} .2403168{col 41}{space 1}   -8.91{col 50}{space 3}0.000{col 58}{space 4}-2.611127{col 71}{space 3}-1.669102
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2} -1.25801{col 30}{space 2} .5001752{col 41}{space 1}   -2.52{col 50}{space 3}0.012{col 58}{space 4}-2.238336{col 71}{space 3}-.2776848
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (omitted)
+{space 11}jel_l {c |}{col 18}{res}{space 2} .3053202{col 30}{space 2} .3177153{col 41}{space 1}    0.96{col 50}{space 3}0.337{col 58}{space 4}-.3173904{col 71}{space 3} .9280308
+{txt}{space 11}jel_m {c |}{col 18}{res}{space 2}-1.502454{col 30}{space 2} .2807915{col 41}{space 1}   -5.35{col 50}{space 3}0.000{col 58}{space 4}-2.052795{col 71}{space 3}-.9521126
+{txt}{space 11}jel_n {c |}{col 18}{res}{space 2}-.1224992{col 30}{space 2} 1.015287{col 41}{space 1}   -0.12{col 50}{space 3}0.904{col 58}{space 4}-2.112424{col 71}{space 3} 1.867426
+{txt}{space 11}jel_o {c |}{col 18}{res}{space 2} -.215968{col 30}{space 2} .1915018{col 41}{space 1}   -1.13{col 50}{space 3}0.259{col 58}{space 4}-.5913047{col 71}{space 3} .1593686
+{txt}{space 11}jel_p {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (omitted)
+{space 11}jel_q {c |}{col 18}{res}{space 2} 1.101262{col 30}{space 2} .9524054{col 41}{space 1}    1.16{col 50}{space 3}0.248{col 58}{space 4}-.7654185{col 71}{space 3} 2.967942
+{txt}{space 11}jel_r {c |}{col 18}{res}{space 2}-1.230026{col 30}{space 2}  .655771{col 41}{space 1}   -1.88{col 50}{space 3}0.061{col 58}{space 4}-2.515314{col 71}{space 3} .0552611
+{txt}{space 11}jel_z {c |}{col 18}{res}{space 2}-.8583253{col 30}{space 2} .9247651{col 41}{space 1}   -0.93{col 50}{space 3}0.353{col 58}{space 4}-2.670832{col 71}{space 3} .9541809
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2}-5.264078{col 30}{space 2} 1.286045{col 41}{space 1}   -4.09{col 50}{space 3}0.000{col 58}{space 4}-7.784681{col 71}{space 3}-2.743475
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{err}Warning: 1% of the resampled realizations for _pm_1 are exactly identical to original value
+{p2colset 7 16 20 2}{...}
+
+{txt}{p2col :Command:}{res:logit top_finance i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, vce(cluster group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2} 2.938554{col 27}     67{col 35}   1022{col 43} 0.0656{col 51} 0.0077{col 59}  .051164{col 69}{space 1} .0825117
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, vce(cluster group)
+{res}{txt}(running {bf:logit} on estimation sample)
+
+note: {bf:5.num_auth} != 0 predicts failure perfectly;
+      {bf:5.num_auth} omitted and 3 obs not used.
+
+{res}{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-410.73184}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-325.66985}  
+Iteration 2:{space 3}log pseudolikelihood = {res: -325.3105}  
+Iteration 3:{space 3}log pseudolikelihood = {res: -325.3101}  
+Iteration 4:{space 3}log pseudolikelihood = {res: -325.3101}  
+{res}
+{txt}{col 1}Logistic regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:593}
+{txt}{col 57}{lalign 13:{help j_robustsingular##|_new:Wald chi2(11)}}{col 70} = {res}{ralign 6:.}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:.}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 9:-325.3101}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.2080}
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}             top{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      z{col 50}   P>|z|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2} .5659526{col 30}{space 2} .1605417{col 41}{space 1}    3.53{col 50}{space 3}0.000{col 58}{space 4} .2512966{col 71}{space 3} .8806086
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} .7022263{col 30}{space 2} .2947486{col 41}{space 1}    2.38{col 50}{space 3}0.017{col 58}{space 4} .1245297{col 71}{space 3} 1.279923
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}-.0004719{col 30}{space 2} .6153425{col 41}{space 1}   -0.00{col 50}{space 3}0.999{col 58}{space 4}-1.206521{col 71}{space 3} 1.205577
+{txt}{space 14}5  {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (empty)
+{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2} .0691619{col 30}{space 2} .0144767{col 41}{space 1}    4.78{col 50}{space 3}0.000{col 58}{space 4} .0407881{col 71}{space 3} .0975357
+{txt}{space 13}age {c |}{col 18}{res}{space 2}-.0551294{col 30}{space 2}  .271999{col 41}{space 1}   -0.20{col 50}{space 3}0.839{col 58}{space 4}-.5882376{col 71}{space 3} .4779788
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2}-.0185731{col 30}{space 2} .0290528{col 41}{space 1}   -0.64{col 50}{space 3}0.523{col 58}{space 4}-.0755156{col 71}{space 3} .0383694
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2}  .000294{col 30}{space 2} .0001757{col 41}{space 1}    1.67{col 50}{space 3}0.094{col 58}{space 4}-.0000504{col 71}{space 3} .0006384
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2} .0261182{col 30}{space 2} .2849166{col 41}{space 1}    0.09{col 50}{space 3}0.927{col 58}{space 4} -.532308{col 71}{space 3} .5845444
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2} .4117328{col 30}{space 2} .3732296{col 41}{space 1}    1.10{col 50}{space 3}0.270{col 58}{space 4}-.3197837{col 71}{space 3} 1.143249
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-.3135388{col 30}{space 2} .3541448{col 41}{space 1}   -0.89{col 50}{space 3}0.376{col 58}{space 4} -1.00765{col 71}{space 3} .3805722
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-.6282718{col 30}{space 2} .2209148{col 41}{space 1}   -2.84{col 50}{space 3}0.004{col 58}{space 4}-1.061257{col 71}{space 3}-.1952867
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}-.9528187{col 30}{space 2} .4440026{col 41}{space 1}   -2.15{col 50}{space 3}0.032{col 58}{space 4}-1.823048{col 71}{space 3}-.0825897
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-.8178002{col 30}{space 2} .2200205{col 41}{space 1}   -3.72{col 50}{space 3}0.000{col 58}{space 4}-1.249033{col 71}{space 3}-.3865679
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2} 1.330195{col 30}{space 2} .4242428{col 41}{space 1}    3.14{col 50}{space 3}0.002{col 58}{space 4} .4986945{col 71}{space 3} 2.161696
+{txt}euclidmean_group {c |}{col 18}{res}{space 2} .0010002{col 30}{space 2}  .004883{col 41}{space 1}    0.20{col 50}{space 3}0.838{col 58}{space 4}-.0085704{col 71}{space 3} .0105707
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2}-2.440419{col 30}{space 2} 1.088635{col 41}{space 1}   -2.24{col 50}{space 3}0.025{col 58}{space 4}-4.574104{col 71}{space 3}-.3067338
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{p2colset 7 16 20 2}{...}
+
+{p2col :Command:}{res:logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, vce(cluster group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2} 1.330195{col 27}    120{col 35}   1022{col 43} 0.1174{col 51} 0.0101{col 59} .0983154{col 69}{space 1} .1387523
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, vce(cluster group)
+{res}{txt}(running {bf:logit} on estimation sample)
+
+note: {bf:5.num_auth} != 0 predicts failure perfectly;
+      {bf:5.num_auth} omitted and 3 obs not used.
+
+note: {bf:jel_k} omitted because of collinearity.
+{res}{txt}Iteration 0:{space 3}log pseudolikelihood = {res:-410.73184}  
+Iteration 1:{space 3}log pseudolikelihood = {res:-298.26947}  
+Iteration 2:{space 3}log pseudolikelihood = {res:-297.77216}  
+Iteration 3:{space 3}log pseudolikelihood = {res:-297.76085}  
+Iteration 4:{space 3}log pseudolikelihood = {res:-297.76084}  
+{res}
+{txt}{col 1}Logistic regression{col 57}{lalign 13:Number of obs}{col 70} = {res}{ralign 6:593}
+{txt}{col 57}{lalign 13:{help j_robustsingular##|_new:Wald chi2(11)}}{col 70} = {res}{ralign 6:.}
+{txt}{col 57}{lalign 13:Prob > chi2}{col 70} = {res}{ralign 6:.}
+{txt}{col 1}{lalign 20:Log pseudolikelihood}{col 21} = {res}{ralign 10:-297.76084}{txt}{col 57}{lalign 13:Pseudo R2}{col 70} = {res}{ralign 6:0.2750}
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}             top{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      z{col 50}   P>|z|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2} .7216871{col 30}{space 2} .2119664{col 41}{space 1}    3.40{col 50}{space 3}0.001{col 58}{space 4} .3062405{col 71}{space 3} 1.137134
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} .8036166{col 30}{space 2} .3025278{col 41}{space 1}    2.66{col 50}{space 3}0.008{col 58}{space 4} .2106731{col 71}{space 3}  1.39656
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}-.1987701{col 30}{space 2} .5219303{col 41}{space 1}   -0.38{col 50}{space 3}0.703{col 58}{space 4}-1.221735{col 71}{space 3} .8241945
+{txt}{space 14}5  {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (empty)
+{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2} .0655162{col 30}{space 2} .0126413{col 41}{space 1}    5.18{col 50}{space 3}0.000{col 58}{space 4} .0407396{col 71}{space 3} .0902927
+{txt}{space 13}age {c |}{col 18}{res}{space 2}-.0770473{col 30}{space 2} .2696325{col 41}{space 1}   -0.29{col 50}{space 3}0.775{col 58}{space 4}-.6055173{col 71}{space 3} .4514227
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2}-.0150543{col 30}{space 2} .0275326{col 41}{space 1}   -0.55{col 50}{space 3}0.585{col 58}{space 4}-.0690172{col 71}{space 3} .0389086
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2} .0002934{col 30}{space 2} .0001585{col 41}{space 1}    1.85{col 50}{space 3}0.064{col 58}{space 4}-.0000173{col 71}{space 3} .0006041
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2} .2256472{col 30}{space 2} .3192508{col 41}{space 1}    0.71{col 50}{space 3}0.480{col 58}{space 4}-.4000728{col 71}{space 3} .8513672
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2} .5262936{col 30}{space 2} .4591237{col 41}{space 1}    1.15{col 50}{space 3}0.252{col 58}{space 4}-.3735723{col 71}{space 3}  1.42616
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-.2556068{col 30}{space 2} .3604891{col 41}{space 1}   -0.71{col 50}{space 3}0.478{col 58}{space 4}-.9621524{col 71}{space 3} .4509388
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-.7130133{col 30}{space 2} .3157035{col 41}{space 1}   -2.26{col 50}{space 3}0.024{col 58}{space 4}-1.331781{col 71}{space 3}-.0942459
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2} -1.12915{col 30}{space 2} .4769971{col 41}{space 1}   -2.37{col 50}{space 3}0.018{col 58}{space 4}-2.064047{col 71}{space 3}-.1942525
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-.8858686{col 30}{space 2} .2827029{col 41}{space 1}   -3.13{col 50}{space 3}0.002{col 58}{space 4}-1.439956{col 71}{space 3}-.3317812
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2} 1.038668{col 30}{space 2} .5839768{col 41}{space 1}    1.78{col 50}{space 3}0.075{col 58}{space 4}-.1059054{col 71}{space 3} 2.183241
+{txt}euclidmean_group {c |}{col 18}{res}{space 2}-.0022561{col 30}{space 2} .0028717{col 41}{space 1}   -0.79{col 50}{space 3}0.432{col 58}{space 4}-.0078845{col 71}{space 3} .0033724
+{txt}{space 11}jel_c {c |}{col 18}{res}{space 2}-.7590718{col 30}{space 2} .2291581{col 41}{space 1}   -3.31{col 50}{space 3}0.001{col 58}{space 4}-1.208214{col 71}{space 3}-.3099301
+{txt}{space 11}jel_d {c |}{col 18}{res}{space 2}-.1585146{col 30}{space 2} .3580127{col 41}{space 1}   -0.44{col 50}{space 3}0.658{col 58}{space 4}-.8602065{col 71}{space 3} .5431773
+{txt}{space 11}jel_e {c |}{col 18}{res}{space 2}-.5523009{col 30}{space 2} .3066108{col 41}{space 1}   -1.80{col 50}{space 3}0.072{col 58}{space 4}-1.153247{col 71}{space 3} .0486453
+{txt}{space 11}jel_f {c |}{col 18}{res}{space 2}-.8544387{col 30}{space 2} .3940858{col 41}{space 1}   -2.17{col 50}{space 3}0.030{col 58}{space 4}-1.626833{col 71}{space 3}-.0820448
+{txt}{space 11}jel_g {c |}{col 18}{res}{space 2} .3363717{col 30}{space 2} .2623949{col 41}{space 1}    1.28{col 50}{space 3}0.200{col 58}{space 4}-.1779129{col 71}{space 3} .8506563
+{txt}{space 11}jel_h {c |}{col 18}{res}{space 2} .6507818{col 30}{space 2} .7867213{col 41}{space 1}    0.83{col 50}{space 3}0.408{col 58}{space 4}-.8911637{col 71}{space 3} 2.192727
+{txt}{space 11}jel_i {c |}{col 18}{res}{space 2}-3.036825{col 30}{space 2} 5.895832{col 41}{space 1}   -0.52{col 50}{space 3}0.606{col 58}{space 4}-14.59244{col 71}{space 3} 8.518794
+{txt}{space 11}jel_j {c |}{col 18}{res}{space 2}-1.271084{col 30}{space 2} .1832657{col 41}{space 1}   -6.94{col 50}{space 3}0.000{col 58}{space 4}-1.630278{col 71}{space 3}-.9118896
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2}-.2043478{col 30}{space 2} .7334294{col 41}{space 1}   -0.28{col 50}{space 3}0.781{col 58}{space 4}-1.641843{col 71}{space 3} 1.233147
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (omitted)
+{space 11}jel_l {c |}{col 18}{res}{space 2} .1911791{col 30}{space 2} .2362527{col 41}{space 1}    0.81{col 50}{space 3}0.418{col 58}{space 4}-.2718677{col 71}{space 3} .6542259
+{txt}{space 11}jel_m {c |}{col 18}{res}{space 2} .3173356{col 30}{space 2}  1.07414{col 41}{space 1}    0.30{col 50}{space 3}0.768{col 58}{space 4} -1.78794{col 71}{space 3} 2.422611
+{txt}{space 11}jel_n {c |}{col 18}{res}{space 2} .7032695{col 30}{space 2} .6583495{col 41}{space 1}    1.07{col 50}{space 3}0.285{col 58}{space 4}-.5870718{col 71}{space 3} 1.993611
+{txt}{space 11}jel_o {c |}{col 18}{res}{space 2} .3913127{col 30}{space 2} .3114141{col 41}{space 1}    1.26{col 50}{space 3}0.209{col 58}{space 4}-.2190477{col 71}{space 3} 1.001673
+{txt}{space 11}jel_p {c |}{col 18}{res}{space 2}-2.297072{col 30}{space 2} .7586393{col 41}{space 1}   -3.03{col 50}{space 3}0.002{col 58}{space 4}-3.783978{col 71}{space 3}-.8101662
+{txt}{space 11}jel_q {c |}{col 18}{res}{space 2} .3613105{col 30}{space 2} 1.569039{col 41}{space 1}    0.23{col 50}{space 3}0.818{col 58}{space 4} -2.71395{col 71}{space 3} 3.436571
+{txt}{space 11}jel_r {c |}{col 18}{res}{space 2}-1.305914{col 30}{space 2} .5385602{col 41}{space 1}   -2.42{col 50}{space 3}0.015{col 58}{space 4}-2.361472{col 71}{space 3}-.2503549
+{txt}{space 11}jel_z {c |}{col 18}{res}{space 2} .0661177{col 30}{space 2} 1.187291{col 41}{space 1}    0.06{col 50}{space 3}0.956{col 58}{space 4} -2.26093{col 71}{space 3} 2.393165
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2} -1.39302{col 30}{space 2} .9113503{col 41}{space 1}   -1.53{col 50}{space 3}0.126{col 58}{space 4}-3.179234{col 71}{space 3} .3931936
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+
+Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{p2colset 7 16 20 2}{...}
+
+{p2col :Command:}{res:logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, vce(cluster group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2} 1.038668{col 27}    149{col 35}   1022{col 43} 0.1458{col 51} 0.0110{col 59} .1247121{col 69}{space 1} .1689357
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. 
+. ** Journal quality
+. eststo: qui regress sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui regress sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui regress avg_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{txt}({res}est3{txt} stored)
+
+{com}. eststo: qui regress avg_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{txt}({res}est4{txt} stored)
+
+{com}. eststo: qui regress hindex i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{txt}({res}est5{txt} stored)
+
+{com}. eststo: qui regress hindex i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{txt}({res}est6{txt} stored)
+
+{com}. esttab using ./990_output/Tables/discussion_reg-journal, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2, labels("\textit{c -(}N{c )-}" "R$^{c -(}2{c )-}$")) ///
+>         wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Paper controls=num_pages" "Author controls=euclid_auth" "Group control=euclidmean_group" "JEL categories=jel_*", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/discussion_reg-journal.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. 
+. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         regress sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{res}{txt}(running {bf:regress} on estimation sample)
+
+Linear regression                               Number of obs     = {res}       576
+                                                {txt}{help j_robustsingular:F(11, 12) }        =  {res}        .
+                                                {txt}Prob > F          = {res}         .
+                                                {txt}R-squared         = {res}    0.2775
+                                                {txt}Root MSE          =    {res} 4.4348
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}             sjr{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      t{col 50}   P>|t|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2} 1.237001{col 30}{space 2} .5086325{col 41}{space 1}    2.43{col 50}{space 3}0.032{col 58}{space 4} .1287858{col 71}{space 3} 2.345216
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} 1.706602{col 30}{space 2}  .524287{col 41}{space 1}    3.26{col 50}{space 3}0.007{col 58}{space 4} .5642789{col 71}{space 3} 2.848925
+{txt}{space 14}4  {c |}{col 18}{res}{space 2} .9458519{col 30}{space 2} 1.085695{col 41}{space 1}    0.87{col 50}{space 3}0.401{col 58}{space 4}-1.419674{col 71}{space 3} 3.311378
+{txt}{space 14}5  {c |}{col 18}{res}{space 2} 1.376984{col 30}{space 2} 2.740877{col 41}{space 1}    0.50{col 50}{space 3}0.624{col 58}{space 4}-4.594875{col 71}{space 3} 7.348842
+{txt}{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2} .1700113{col 30}{space 2} .0178799{col 41}{space 1}    9.51{col 50}{space 3}0.000{col 58}{space 4} .1310544{col 71}{space 3} .2089681
+{txt}{space 13}age {c |}{col 18}{res}{space 2} .2782654{col 30}{space 2} .3599157{col 41}{space 1}    0.77{col 50}{space 3}0.454{col 58}{space 4}-.5059235{col 71}{space 3} 1.062454
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2}-.0519283{col 30}{space 2} .0301417{col 41}{space 1}   -1.72{col 50}{space 3}0.111{col 58}{space 4}-.1176015{col 71}{space 3} .0137449
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2} .0011384{col 30}{space 2} .0003196{col 41}{space 1}    3.56{col 50}{space 3}0.004{col 58}{space 4} .0004421{col 71}{space 3} .0018347
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2} .4811057{col 30}{space 2} .5673954{col 41}{space 1}    0.85{col 50}{space 3}0.413{col 58}{space 4}-.7551426{col 71}{space 3} 1.717354
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2} .5480876{col 30}{space 2}  .847147{col 41}{space 1}    0.65{col 50}{space 3}0.530{col 58}{space 4}-1.297687{col 71}{space 3} 2.393862
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2} .2311685{col 30}{space 2} .9513716{col 41}{space 1}    0.24{col 50}{space 3}0.812{col 58}{space 4}-1.841692{col 71}{space 3} 2.304029
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-.8433241{col 30}{space 2} .7884554{col 41}{space 1}   -1.07{col 50}{space 3}0.306{col 58}{space 4}-2.561221{col 71}{space 3} .8745726
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}-.7694391{col 30}{space 2} 1.296949{col 41}{space 1}   -0.59{col 50}{space 3}0.564{col 58}{space 4}-3.595247{col 71}{space 3} 2.056369
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2} -1.63017{col 30}{space 2} .7440726{col 41}{space 1}   -2.19{col 50}{space 3}0.049{col 58}{space 4}-3.251365{col 71}{space 3}-.0089749
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2}  2.18176{col 30}{space 2} .6436841{col 41}{space 1}    3.39{col 50}{space 3}0.005{col 58}{space 4} .7792933{col 71}{space 3} 3.584227
+{txt}euclidmean_group {c |}{col 18}{res}{space 2} .0044747{col 30}{space 2} .0062995{col 41}{space 1}    0.71{col 50}{space 3}0.491{col 58}{space 4}-.0092507{col 71}{space 3} .0182001
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2} .1657342{col 30}{space 2} 1.251513{col 41}{space 1}    0.13{col 50}{space 3}0.897{col 58}{space 4}-2.561078{col 71}{space 3} 2.892547
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{txt}Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{err}Warning: 1% of the resampled realizations for _pm_1 are exactly identical to original value
+{p2colset 7 16 20 2}{...}
+
+{txt}{p2col :Command:}{res:regress sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2}  2.18176{col 27}     97{col 35}   1022{col 43} 0.0949{col 51} 0.0092{col 59} .0776407{col 69}{space 1} .1145557
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         regress sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{res}{txt}(running {bf:regress} on estimation sample)
+{p 0 6 2}note: {bf:jel_k} omitted because of collinearity.{p_end}
+
+Linear regression                               Number of obs     = {res}       576
+                                                {txt}{help j_robustsingular:F(11, 12) }        =  {res}        .
+                                                {txt}Prob > F          = {res}         .
+                                                {txt}R-squared         = {res}    0.3210
+                                                {txt}Root MSE          =    {res} 4.3662
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}             sjr{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      t{col 50}   P>|t|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2} 1.265744{col 30}{space 2} .4848468{col 41}{space 1}    2.61{col 50}{space 3}0.023{col 58}{space 4} .2093535{col 71}{space 3} 2.322134
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} 1.793844{col 30}{space 2} .4954669{col 41}{space 1}    3.62{col 50}{space 3}0.004{col 58}{space 4} .7143142{col 71}{space 3} 2.873374
+{txt}{space 14}4  {c |}{col 18}{res}{space 2} .8115634{col 30}{space 2} .9654261{col 41}{space 1}    0.84{col 50}{space 3}0.417{col 58}{space 4}-1.291919{col 71}{space 3} 2.915046
+{txt}{space 14}5  {c |}{col 18}{res}{space 2} 1.157072{col 30}{space 2}  2.92107{col 41}{space 1}    0.40{col 50}{space 3}0.699{col 58}{space 4}-5.207392{col 71}{space 3} 7.521537
+{txt}{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2} .1586507{col 30}{space 2} .0163144{col 41}{space 1}    9.72{col 50}{space 3}0.000{col 58}{space 4} .1231046{col 71}{space 3} .1941967
+{txt}{space 13}age {c |}{col 18}{res}{space 2} .3016304{col 30}{space 2} .3673026{col 41}{space 1}    0.82{col 50}{space 3}0.428{col 58}{space 4}-.4986532{col 71}{space 3} 1.101914
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2}-.0534739{col 30}{space 2} .0301408{col 41}{space 1}   -1.77{col 50}{space 3}0.101{col 58}{space 4}-.1191451{col 71}{space 3} .0121973
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2} .0011475{col 30}{space 2} .0003332{col 41}{space 1}    3.44{col 50}{space 3}0.005{col 58}{space 4} .0004215{col 71}{space 3} .0018736
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2} .8661507{col 30}{space 2} .6706175{col 41}{space 1}    1.29{col 50}{space 3}0.221{col 58}{space 4}-.5949993{col 71}{space 3} 2.327301
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2} .6792627{col 30}{space 2} .8953414{col 41}{space 1}    0.76{col 50}{space 3}0.463{col 58}{space 4}-1.271519{col 71}{space 3} 2.630044
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2} .3839887{col 30}{space 2} .9442946{col 41}{space 1}    0.41{col 50}{space 3}0.691{col 58}{space 4}-1.673452{col 71}{space 3}  2.44143
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-.9632939{col 30}{space 2}  .699211{col 41}{space 1}   -1.38{col 50}{space 3}0.193{col 58}{space 4}-2.486744{col 71}{space 3}  .560156
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}-.8682036{col 30}{space 2} 1.256554{col 41}{space 1}   -0.69{col 50}{space 3}0.503{col 58}{space 4}-3.605999{col 71}{space 3} 1.869591
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-1.793244{col 30}{space 2} .7642602{col 41}{space 1}   -2.35{col 50}{space 3}0.037{col 58}{space 4}-3.458424{col 71}{space 3}-.1280643
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2} 1.766537{col 30}{space 2} .9135347{col 41}{space 1}    1.93{col 50}{space 3}0.077{col 58}{space 4}-.2238845{col 71}{space 3} 3.756958
+{txt}euclidmean_group {c |}{col 18}{res}{space 2} .0012146{col 30}{space 2} .0044408{col 41}{space 1}    0.27{col 50}{space 3}0.789{col 58}{space 4}-.0084611{col 71}{space 3} .0108902
+{txt}{space 11}jel_c {c |}{col 18}{res}{space 2}-1.144546{col 30}{space 2} .7504825{col 41}{space 1}   -1.53{col 50}{space 3}0.153{col 58}{space 4}-2.779707{col 71}{space 3} .4906153
+{txt}{space 11}jel_d {c |}{col 18}{res}{space 2} .6917851{col 30}{space 2} .5097316{col 41}{space 1}    1.36{col 50}{space 3}0.200{col 58}{space 4}-.4188245{col 71}{space 3} 1.802395
+{txt}{space 11}jel_e {c |}{col 18}{res}{space 2}-.7215115{col 30}{space 2} .7230622{col 41}{space 1}   -1.00{col 50}{space 3}0.338{col 58}{space 4}-2.296929{col 71}{space 3} .8539058
+{txt}{space 11}jel_f {c |}{col 18}{res}{space 2}-.7237264{col 30}{space 2} .6732899{col 41}{space 1}   -1.07{col 50}{space 3}0.304{col 58}{space 4}-2.190699{col 71}{space 3} .7432463
+{txt}{space 11}jel_g {c |}{col 18}{res}{space 2} .2821286{col 30}{space 2} .5372465{col 41}{space 1}    0.53{col 50}{space 3}0.609{col 58}{space 4}-.8884309{col 71}{space 3} 1.452688
+{txt}{space 11}jel_h {c |}{col 18}{res}{space 2} .9401929{col 30}{space 2} .9340561{col 41}{space 1}    1.01{col 50}{space 3}0.334{col 58}{space 4} -1.09494{col 71}{space 3} 2.975326
+{txt}{space 11}jel_i {c |}{col 18}{res}{space 2} -4.46688{col 30}{space 2} 2.135325{col 41}{space 1}   -2.09{col 50}{space 3}0.058{col 58}{space 4}-9.119352{col 71}{space 3} .1855928
+{txt}{space 11}jel_j {c |}{col 18}{res}{space 2}-.3115996{col 30}{space 2} 1.025669{col 41}{space 1}   -0.30{col 50}{space 3}0.766{col 58}{space 4}-2.546341{col 71}{space 3} 1.923142
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2}-1.082595{col 30}{space 2} .5839185{col 41}{space 1}   -1.85{col 50}{space 3}0.088{col 58}{space 4}-2.354845{col 71}{space 3} .1896536
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (omitted)
+{space 11}jel_l {c |}{col 18}{res}{space 2} .0177899{col 30}{space 2} .3533397{col 41}{space 1}    0.05{col 50}{space 3}0.961{col 58}{space 4}-.7520712{col 71}{space 3}  .787651
+{txt}{space 11}jel_m {c |}{col 18}{res}{space 2} .3688699{col 30}{space 2} .9531374{col 41}{space 1}    0.39{col 50}{space 3}0.706{col 58}{space 4}-1.707838{col 71}{space 3} 2.445578
+{txt}{space 11}jel_n {c |}{col 18}{res}{space 2} .8683459{col 30}{space 2} 1.257347{col 41}{space 1}    0.69{col 50}{space 3}0.503{col 58}{space 4}-1.871178{col 71}{space 3}  3.60787
+{txt}{space 11}jel_o {c |}{col 18}{res}{space 2} .4782955{col 30}{space 2} .6781022{col 41}{space 1}    0.71{col 50}{space 3}0.494{col 58}{space 4}-.9991623{col 71}{space 3} 1.955753
+{txt}{space 11}jel_p {c |}{col 18}{res}{space 2}-3.919581{col 30}{space 2} 1.853096{col 41}{space 1}   -2.12{col 50}{space 3}0.056{col 58}{space 4} -7.95713{col 71}{space 3} .1179674
+{txt}{space 11}jel_q {c |}{col 18}{res}{space 2}-1.045808{col 30}{space 2} 2.405716{col 41}{space 1}   -0.43{col 50}{space 3}0.671{col 58}{space 4}-6.287412{col 71}{space 3} 4.195796
+{txt}{space 11}jel_r {c |}{col 18}{res}{space 2}-2.289087{col 30}{space 2} .9692444{col 41}{space 1}   -2.36{col 50}{space 3}0.036{col 58}{space 4}-4.400889{col 71}{space 3}-.1772851
+{txt}{space 11}jel_z {c |}{col 18}{res}{space 2}-.6674424{col 30}{space 2} 1.777548{col 41}{space 1}   -0.38{col 50}{space 3}0.714{col 58}{space 4}-4.540387{col 71}{space 3} 3.205502
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2} 1.522828{col 30}{space 2} 1.344851{col 41}{space 1}    1.13{col 50}{space 3}0.280{col 58}{space 4} -1.40735{col 71}{space 3} 4.453005
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{txt}Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{p2colset 7 16 20 2}{...}
+
+{p2col :Command:}{res:regress sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2} 1.766537{col 27}     67{col 35}   1022{col 43} 0.0656{col 51} 0.0077{col 59}  .051164{col 69}{space 1} .0825117
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         regress avg_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{res}{txt}(running {bf:regress} on estimation sample)
+
+Linear regression                               Number of obs     = {res}       576
+                                                {txt}{help j_robustsingular:F(11, 12) }        =  {res}        .
+                                                {txt}Prob > F          = {res}         .
+                                                {txt}R-squared         = {res}    0.2613
+                                                {txt}Root MSE          =    {res} 1.4704
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}   avg_citations{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      t{col 50}   P>|t|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2} .2405535{col 30}{space 2} .1753024{col 41}{space 1}    1.37{col 50}{space 3}0.195{col 58}{space 4}-.1413976{col 71}{space 3} .6225047
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} .4777194{col 30}{space 2} .1528066{col 41}{space 1}    3.13{col 50}{space 3}0.009{col 58}{space 4} .1447824{col 71}{space 3} .8106563
+{txt}{space 14}4  {c |}{col 18}{res}{space 2} .1224815{col 30}{space 2} .3407823{col 41}{space 1}    0.36{col 50}{space 3}0.726{col 58}{space 4}-.6200193{col 71}{space 3} .8649822
+{txt}{space 14}5  {c |}{col 18}{res}{space 2} .5307514{col 30}{space 2} 1.076509{col 41}{space 1}    0.49{col 50}{space 3}0.631{col 58}{space 4} -1.81476{col 71}{space 3} 2.876263
+{txt}{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2}  .045254{col 30}{space 2} .0045492{col 41}{space 1}    9.95{col 50}{space 3}0.000{col 58}{space 4} .0353423{col 71}{space 3} .0551658
+{txt}{space 13}age {c |}{col 18}{res}{space 2} .0661176{col 30}{space 2} .1288143{col 41}{space 1}    0.51{col 50}{space 3}0.617{col 58}{space 4}-.2145446{col 71}{space 3} .3467797
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2}-.0139181{col 30}{space 2} .0113833{col 41}{space 1}   -1.22{col 50}{space 3}0.245{col 58}{space 4}-.0387202{col 71}{space 3}  .010884
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2} .0003981{col 30}{space 2} .0001095{col 41}{space 1}    3.64{col 50}{space 3}0.003{col 58}{space 4} .0001596{col 71}{space 3} .0006367
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2} .0816682{col 30}{space 2} .1501194{col 41}{space 1}    0.54{col 50}{space 3}0.596{col 58}{space 4}-.2454139{col 71}{space 3} .4087503
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2} .1455047{col 30}{space 2} .2792307{col 41}{space 1}    0.52{col 50}{space 3}0.612{col 58}{space 4}-.4628868{col 71}{space 3} .7538962
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2} .0868997{col 30}{space 2} .3463272{col 41}{space 1}    0.25{col 50}{space 3}0.806{col 58}{space 4}-.6676825{col 71}{space 3}  .841482
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-.1706272{col 30}{space 2} .2289742{col 41}{space 1}   -0.75{col 50}{space 3}0.471{col 58}{space 4}-.6695191{col 71}{space 3} .3282648
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}-.4334072{col 30}{space 2} .4657095{col 41}{space 1}   -0.93{col 50}{space 3}0.370{col 58}{space 4}-1.448101{col 71}{space 3} .5812867
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-.4319827{col 30}{space 2} .2112687{col 41}{space 1}   -2.04{col 50}{space 3}0.063{col 58}{space 4}-.8922975{col 71}{space 3} .0283322
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2} .9676175{col 30}{space 2} .2497159{col 41}{space 1}    3.87{col 50}{space 3}0.002{col 58}{space 4} .4235333{col 71}{space 3} 1.511702
+{txt}euclidmean_group {c |}{col 18}{res}{space 2} .0029067{col 30}{space 2} .0030817{col 41}{space 1}    0.94{col 50}{space 3}0.364{col 58}{space 4}-.0038076{col 71}{space 3} .0096211
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2} .7226929{col 30}{space 2} .5145577{col 41}{space 1}    1.40{col 50}{space 3}0.186{col 58}{space 4}-.3984321{col 71}{space 3} 1.843818
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{txt}Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{err}Warning: 1% of the resampled realizations for _pm_1 are exactly identical to original value
+{p2colset 7 16 20 2}{...}
+
+{txt}{p2col :Command:}{res:regress avg_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2} .9676175{col 27}     93{col 35}   1022{col 43} 0.0910{col 51} 0.0090{col 59} .0740742{col 69}{space 1} .1103189
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         regress avg_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{res}{txt}(running {bf:regress} on estimation sample)
+{p 0 6 2}note: {bf:jel_k} omitted because of collinearity.{p_end}
+
+Linear regression                               Number of obs     = {res}       576
+                                                {txt}{help j_robustsingular:F(11, 12) }        =  {res}        .
+                                                {txt}Prob > F          = {res}         .
+                                                {txt}R-squared         = {res}    0.3071
+                                                {txt}Root MSE          =    {res} 1.4463
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}   avg_citations{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      t{col 50}   P>|t|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2} .2674584{col 30}{space 2} .1656108{col 41}{space 1}    1.61{col 50}{space 3}0.132{col 58}{space 4}-.0933766{col 71}{space 3} .6282933
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} .4900802{col 30}{space 2} .1219244{col 41}{space 1}    4.02{col 50}{space 3}0.002{col 58}{space 4} .2244297{col 71}{space 3} .7557306
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}  .022498{col 30}{space 2} .2923571{col 41}{space 1}    0.08{col 50}{space 3}0.940{col 58}{space 4}-.6144934{col 71}{space 3} .6594893
+{txt}{space 14}5  {c |}{col 18}{res}{space 2} .5366594{col 30}{space 2} 1.110894{col 41}{space 1}    0.48{col 50}{space 3}0.638{col 58}{space 4}-1.883771{col 71}{space 3}  2.95709
+{txt}{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2} .0415381{col 30}{space 2} .0056827{col 41}{space 1}    7.31{col 50}{space 3}0.000{col 58}{space 4} .0291566{col 71}{space 3} .0539195
+{txt}{space 13}age {c |}{col 18}{res}{space 2} .0868371{col 30}{space 2} .1223064{col 41}{space 1}    0.71{col 50}{space 3}0.491{col 58}{space 4}-.1796457{col 71}{space 3} .3533199
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2}-.0155056{col 30}{space 2} .0105969{col 41}{space 1}   -1.46{col 50}{space 3}0.169{col 58}{space 4}-.0385943{col 71}{space 3}  .007583
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2} .0003922{col 30}{space 2} .0001127{col 41}{space 1}    3.48{col 50}{space 3}0.005{col 58}{space 4} .0001466{col 71}{space 3} .0006377
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2} .1862313{col 30}{space 2} .1893286{col 41}{space 1}    0.98{col 50}{space 3}0.345{col 58}{space 4}-.2262803{col 71}{space 3} .5987428
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2} .1600276{col 30}{space 2} .3015061{col 41}{space 1}    0.53{col 50}{space 3}0.605{col 58}{space 4}-.4968977{col 71}{space 3} .8169529
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}  .143685{col 30}{space 2} .3268101{col 41}{space 1}    0.44{col 50}{space 3}0.668{col 58}{space 4} -.568373{col 71}{space 3} .8557431
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-.1724142{col 30}{space 2} .2063759{col 41}{space 1}   -0.84{col 50}{space 3}0.420{col 58}{space 4}-.6220687{col 71}{space 3} .2772403
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}-.4052237{col 30}{space 2} .4320085{col 41}{space 1}   -0.94{col 50}{space 3}0.367{col 58}{space 4}-1.346489{col 71}{space 3}  .536042
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-.4403795{col 30}{space 2} .2301966{col 41}{space 1}   -1.91{col 50}{space 3}0.080{col 58}{space 4}-.9419348{col 71}{space 3} .0611757
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2} .6775797{col 30}{space 2} .2882118{col 41}{space 1}    2.35{col 50}{space 3}0.037{col 58}{space 4} .0496202{col 71}{space 3} 1.305539
+{txt}euclidmean_group {c |}{col 18}{res}{space 2} .0013561{col 30}{space 2} .0022616{col 41}{space 1}    0.60{col 50}{space 3}0.560{col 58}{space 4}-.0035716{col 71}{space 3} .0062837
+{txt}{space 11}jel_c {c |}{col 18}{res}{space 2}-.4239976{col 30}{space 2} .1990336{col 41}{space 1}   -2.13{col 50}{space 3}0.055{col 58}{space 4}-.8576546{col 71}{space 3} .0096595
+{txt}{space 11}jel_d {c |}{col 18}{res}{space 2} .0750908{col 30}{space 2} .1571153{col 41}{space 1}    0.48{col 50}{space 3}0.641{col 58}{space 4}-.2672341{col 71}{space 3} .4174157
+{txt}{space 11}jel_e {c |}{col 18}{res}{space 2}-.2244114{col 30}{space 2} .2779237{col 41}{space 1}   -0.81{col 50}{space 3}0.435{col 58}{space 4}-.8299551{col 71}{space 3} .3811324
+{txt}{space 11}jel_f {c |}{col 18}{res}{space 2}-.2410889{col 30}{space 2} .2595949{col 41}{space 1}   -0.93{col 50}{space 3}0.371{col 58}{space 4}-.8066977{col 71}{space 3} .3245199
+{txt}{space 11}jel_g {c |}{col 18}{res}{space 2}  .341169{col 30}{space 2} .1598985{col 41}{space 1}    2.13{col 50}{space 3}0.054{col 58}{space 4}-.0072199{col 71}{space 3} .6895579
+{txt}{space 11}jel_h {c |}{col 18}{res}{space 2}  .103362{col 30}{space 2} .2579006{col 41}{space 1}    0.40{col 50}{space 3}0.696{col 58}{space 4}-.4585551{col 71}{space 3} .6652791
+{txt}{space 11}jel_i {c |}{col 18}{res}{space 2}-1.158552{col 30}{space 2} .6378374{col 41}{space 1}   -1.82{col 50}{space 3}0.094{col 58}{space 4} -2.54828{col 71}{space 3} .2311765
+{txt}{space 11}jel_j {c |}{col 18}{res}{space 2}-.0794385{col 30}{space 2} .3058229{col 41}{space 1}   -0.26{col 50}{space 3}0.799{col 58}{space 4}-.7457694{col 71}{space 3} .5868923
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2} .0170478{col 30}{space 2} .1961657{col 41}{space 1}    0.09{col 50}{space 3}0.932{col 58}{space 4}-.4103605{col 71}{space 3} .4444561
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (omitted)
+{space 11}jel_l {c |}{col 18}{res}{space 2} .0462006{col 30}{space 2}  .106352{col 41}{space 1}    0.43{col 50}{space 3}0.672{col 58}{space 4}-.1855205{col 71}{space 3} .2779217
+{txt}{space 11}jel_m {c |}{col 18}{res}{space 2} .0903163{col 30}{space 2} .2783593{col 41}{space 1}    0.32{col 50}{space 3}0.751{col 58}{space 4}-.5161765{col 71}{space 3} .6968091
+{txt}{space 11}jel_n {c |}{col 18}{res}{space 2} .0855347{col 30}{space 2}  .457313{col 41}{space 1}    0.19{col 50}{space 3}0.855{col 58}{space 4}-.9108648{col 71}{space 3} 1.081934
+{txt}{space 11}jel_o {c |}{col 18}{res}{space 2} .2244153{col 30}{space 2} .1764444{col 41}{space 1}    1.27{col 50}{space 3}0.228{col 58}{space 4} -.160024{col 71}{space 3} .6088547
+{txt}{space 11}jel_p {c |}{col 18}{res}{space 2}  -1.6562{col 30}{space 2} .5201563{col 41}{space 1}   -3.18{col 50}{space 3}0.008{col 58}{space 4}-2.789524{col 71}{space 3}-.5228769
+{txt}{space 11}jel_q {c |}{col 18}{res}{space 2}-.1219196{col 30}{space 2} .9682079{col 41}{space 1}   -0.13{col 50}{space 3}0.902{col 58}{space 4}-2.231463{col 71}{space 3} 1.987624
+{txt}{space 11}jel_r {c |}{col 18}{res}{space 2}-.5943094{col 30}{space 2} .3986423{col 41}{space 1}   -1.49{col 50}{space 3}0.162{col 58}{space 4}-1.462876{col 71}{space 3} .2742574
+{txt}{space 11}jel_z {c |}{col 18}{res}{space 2}-.3291869{col 30}{space 2} .5803981{col 41}{space 1}   -0.57{col 50}{space 3}0.581{col 58}{space 4}-1.593766{col 71}{space 3} .9353918
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2} 1.158758{col 30}{space 2}  .547043{col 41}{space 1}    2.12{col 50}{space 3}0.056{col 58}{space 4}-.0331465{col 71}{space 3} 2.350662
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{txt}Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{err}Warning: 1% of the resampled realizations for _pm_1 are exactly identical to original value
+{p2colset 7 16 20 2}{...}
+
+{txt}{p2col :Command:}{res:regress avg_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2} .6775797{col 27}     80{col 35}   1022{col 43} 0.0783{col 51} 0.0084{col 59} .0625546{col 69}{space 1} .0964788
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         regress hindex i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{res}{txt}(running {bf:regress} on estimation sample)
+
+Linear regression                               Number of obs     = {res}       576
+                                                {txt}{help j_robustsingular:F(11, 12) }        =  {res}        .
+                                                {txt}Prob > F          = {res}         .
+                                                {txt}R-squared         = {res}    0.1621
+                                                {txt}Root MSE          =    {res} 66.185
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}          hindex{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      t{col 50}   P>|t|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2} 10.54491{col 30}{space 2} 6.453041{col 41}{space 1}    1.63{col 50}{space 3}0.128{col 58}{space 4}-3.515063{col 71}{space 3} 24.60488
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} 15.75803{col 30}{space 2} 8.191692{col 41}{space 1}    1.92{col 50}{space 3}0.078{col 58}{space 4}-2.090132{col 71}{space 3}  33.6062
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}-.7177165{col 30}{space 2} 15.58057{col 41}{space 1}   -0.05{col 50}{space 3}0.964{col 58}{space 4}-34.66487{col 71}{space 3} 33.22944
+{txt}{space 14}5  {c |}{col 18}{res}{space 2}-1.049268{col 30}{space 2} 25.80332{col 41}{space 1}   -0.04{col 50}{space 3}0.968{col 58}{space 4}-57.26987{col 71}{space 3} 55.17133
+{txt}{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2} .6324654{col 30}{space 2} .2564878{col 41}{space 1}    2.47{col 50}{space 3}0.030{col 58}{space 4} .0736265{col 71}{space 3} 1.191304
+{txt}{space 13}age {c |}{col 18}{res}{space 2}-6.892493{col 30}{space 2} 5.518503{col 41}{space 1}   -1.25{col 50}{space 3}0.235{col 58}{space 4}-18.91628{col 71}{space 3} 5.131292
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2}-.2712772{col 30}{space 2}   .45008{col 41}{space 1}   -0.60{col 50}{space 3}0.558{col 58}{space 4}-1.251917{col 71}{space 3} .7093628
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2} .0060312{col 30}{space 2} .0037275{col 41}{space 1}    1.62{col 50}{space 3}0.132{col 58}{space 4}-.0020904{col 71}{space 3} .0141528
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2} -8.14901{col 30}{space 2} 8.275605{col 41}{space 1}   -0.98{col 50}{space 3}0.344{col 58}{space 4}   -26.18{col 71}{space 3} 9.881984
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2} 5.803265{col 30}{space 2} 10.15297{col 41}{space 1}    0.57{col 50}{space 3}0.578{col 58}{space 4}-16.31815{col 71}{space 3} 27.92468
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-14.14833{col 30}{space 2}  13.2746{col 41}{space 1}   -1.07{col 50}{space 3}0.307{col 58}{space 4} -43.0712{col 71}{space 3} 14.77454
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-3.706117{col 30}{space 2} 9.136428{col 41}{space 1}   -0.41{col 50}{space 3}0.692{col 58}{space 4}-23.61268{col 71}{space 3} 16.20045
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}-17.64665{col 30}{space 2} 20.27607{col 41}{space 1}   -0.87{col 50}{space 3}0.401{col 58}{space 4}-61.82442{col 71}{space 3} 26.53111
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-5.409868{col 30}{space 2} 9.744911{col 41}{space 1}   -0.56{col 50}{space 3}0.589{col 58}{space 4} -26.6422{col 71}{space 3} 15.82247
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2} 33.00165{col 30}{space 2} 10.87907{col 41}{space 1}    3.03{col 50}{space 3}0.010{col 58}{space 4} 9.298192{col 71}{space 3}  56.7051
+{txt}euclidmean_group {c |}{col 18}{res}{space 2} .1108955{col 30}{space 2} .1419926{col 41}{space 1}    0.78{col 50}{space 3}0.450{col 58}{space 4}-.1984797{col 71}{space 3} .4202708
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2} 130.5096{col 30}{space 2} 24.89663{col 41}{space 1}    5.24{col 50}{space 3}0.000{col 58}{space 4} 76.26453{col 71}{space 3} 184.7547
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{txt}Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{p2colset 7 16 20 2}{...}
+
+{p2col :Command:}{res:regress hindex i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2} 33.00164{col 27}    135{col 35}   1022{col 43} 0.1321{col 51} 0.0106{col 59} .1119289{col 69}{space 1}  .154404
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. ritest has_discussion _b[has_discussion], cluster(group_main) reps(1022) seed(42): ///
+>         regress hindex i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{res}{txt}(running {bf:regress} on estimation sample)
+{p 0 6 2}note: {bf:jel_k} omitted because of collinearity.{p_end}
+
+Linear regression                               Number of obs     = {res}       576
+                                                {txt}{help j_robustsingular:F(11, 12) }        =  {res}        .
+                                                {txt}Prob > F          = {res}         .
+                                                {txt}R-squared         = {res}    0.2419
+                                                {txt}Root MSE          =    {res} 63.936
+
+{txt}{ralign 82:(Std. err. adjusted for {res:13} clusters in {res:group})}
+{hline 17}{c TT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{col 18}{c |}{col 30}    Robust
+{col 1}          hindex{col 18}{c |} Coefficient{col 30}  std. err.{col 42}      t{col 50}   P>|t|{col 58}     [95% con{col 71}f. interval]
+{hline 17}{c +}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{space 8}num_auth {c |}
+{space 14}2  {c |}{col 18}{res}{space 2} 12.47945{col 30}{space 2}  7.08732{col 41}{space 1}    1.76{col 50}{space 3}0.104{col 58}{space 4}-2.962493{col 71}{space 3} 27.92139
+{txt}{space 14}3  {c |}{col 18}{res}{space 2} 16.13004{col 30}{space 2} 7.274569{col 41}{space 1}    2.22{col 50}{space 3}0.047{col 58}{space 4} .2801141{col 71}{space 3} 31.97996
+{txt}{space 14}4  {c |}{col 18}{res}{space 2}-6.419031{col 30}{space 2} 12.46126{col 41}{space 1}   -0.52{col 50}{space 3}0.616{col 58}{space 4}-33.56979{col 71}{space 3} 20.73173
+{txt}{space 14}5  {c |}{col 18}{res}{space 2}-4.508148{col 30}{space 2} 23.02029{col 41}{space 1}   -0.20{col 50}{space 3}0.848{col 58}{space 4}-54.66504{col 71}{space 3} 45.64875
+{txt}{space 16} {c |}
+{space 7}num_pages {c |}{col 18}{res}{space 2} .4413298{col 30}{space 2} .2583826{col 41}{space 1}    1.71{col 50}{space 3}0.113{col 58}{space 4}-.1216376{col 71}{space 3} 1.004297
+{txt}{space 13}age {c |}{col 18}{res}{space 2}-5.653158{col 30}{space 2} 5.696964{col 41}{space 1}   -0.99{col 50}{space 3}0.341{col 58}{space 4}-18.06578{col 71}{space 3}  6.75946
+{txt}{space 16} {c |}
+{space 5}c.age#c.age {c |}{col 18}{res}{space 2}-.3499039{col 30}{space 2} .4460552{col 41}{space 1}   -0.78{col 50}{space 3}0.448{col 58}{space 4}-1.321775{col 71}{space 3} .6219668
+{txt}{space 16} {c |}
+{space 5}euclid_auth {c |}{col 18}{res}{space 2} .0053356{col 30}{space 2}  .003716{col 41}{space 1}    1.44{col 50}{space 3}0.177{col 58}{space 4}-.0027609{col 71}{space 3} .0134322
+{txt}{space 16} {c |}
+{space 5}statusmin_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-2.536728{col 30}{space 2} 9.056865{col 41}{space 1}   -0.28{col 50}{space 3}0.784{col 58}{space 4}-22.26994{col 71}{space 3} 17.19649
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}  6.27898{col 30}{space 2} 12.98856{col 41}{space 1}    0.48{col 50}{space 3}0.637{col 58}{space 4}-22.02066{col 71}{space 3} 34.57862
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-10.10939{col 30}{space 2} 11.46991{col 41}{space 1}   -0.88{col 50}{space 3}0.395{col 58}{space 4}-35.10018{col 71}{space 3}  14.8814
+{txt}{space 16} {c |}
+{space 5}statusmax_a {c |}
+{space 11}7-15  {c |}{col 18}{res}{space 2}-4.368542{col 30}{space 2} 9.704266{col 41}{space 1}   -0.45{col 50}{space 3}0.661{col 58}{space 4}-25.51232{col 71}{space 3} 16.77524
+{txt}{space 13}<2  {c |}{col 18}{res}{space 2}-17.49582{col 30}{space 2} 20.31194{col 41}{space 1}   -0.86{col 50}{space 3}0.406{col 58}{space 4}-61.75174{col 71}{space 3} 26.76011
+{txt}{space 12}>15  {c |}{col 18}{res}{space 2}-6.007714{col 30}{space 2} 11.16759{col 41}{space 1}   -0.54{col 50}{space 3}0.600{col 58}{space 4} -30.3398{col 71}{space 3} 18.32437
+{txt}{space 16} {c |}
+{space 2}has_discussion {c |}{col 18}{res}{space 2} 17.35638{col 30}{space 2} 13.30764{col 41}{space 1}    1.30{col 50}{space 3}0.217{col 58}{space 4}-11.63846{col 71}{space 3} 46.35123
+{txt}euclidmean_group {c |}{col 18}{res}{space 2} .0232495{col 30}{space 2} .0940472{col 41}{space 1}    0.25{col 50}{space 3}0.809{col 58}{space 4}-.1816617{col 71}{space 3} .2281607
+{txt}{space 11}jel_c {c |}{col 18}{res}{space 2}-21.82842{col 30}{space 2} 9.907422{col 41}{space 1}   -2.20{col 50}{space 3}0.048{col 58}{space 4}-43.41484{col 71}{space 3}-.2420004
+{txt}{space 11}jel_d {c |}{col 18}{res}{space 2}-2.679436{col 30}{space 2} 10.68641{col 41}{space 1}   -0.25{col 50}{space 3}0.806{col 58}{space 4}-25.96312{col 71}{space 3} 20.60424
+{txt}{space 11}jel_e {c |}{col 18}{res}{space 2}-14.16221{col 30}{space 2} 11.99878{col 41}{space 1}   -1.18{col 50}{space 3}0.261{col 58}{space 4}-40.30531{col 71}{space 3}  11.9809
+{txt}{space 11}jel_f {c |}{col 18}{res}{space 2}-16.56612{col 30}{space 2} 11.55208{col 41}{space 1}   -1.43{col 50}{space 3}0.177{col 58}{space 4}-41.73594{col 71}{space 3} 8.603696
+{txt}{space 11}jel_g {c |}{col 18}{res}{space 2}  16.3923{col 30}{space 2}  7.75132{col 41}{space 1}    2.11{col 50}{space 3}0.056{col 58}{space 4}-.4963723{col 71}{space 3} 33.28098
+{txt}{space 11}jel_h {c |}{col 18}{res}{space 2} .4459666{col 30}{space 2} 10.96995{col 41}{space 1}    0.04{col 50}{space 3}0.968{col 58}{space 4}-23.45549{col 71}{space 3} 24.34743
+{txt}{space 11}jel_i {c |}{col 18}{res}{space 2} -26.8293{col 30}{space 2} 31.28626{col 41}{space 1}   -0.86{col 50}{space 3}0.408{col 58}{space 4}-94.99621{col 71}{space 3}  41.3376
+{txt}{space 11}jel_j {c |}{col 18}{res}{space 2}-23.43412{col 30}{space 2} 5.295529{col 41}{space 1}   -4.43{col 50}{space 3}0.001{col 58}{space 4}-34.97208{col 71}{space 3}-11.89615
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2}-3.206802{col 30}{space 2}  20.7581{col 41}{space 1}   -0.15{col 50}{space 3}0.880{col 58}{space 4}-48.43482{col 71}{space 3} 42.02121
+{txt}{space 11}jel_k {c |}{col 18}{res}{space 2}        0{col 30}{txt}  (omitted)
+{space 11}jel_l {c |}{col 18}{res}{space 2} 9.645889{col 30}{space 2} 5.068711{col 41}{space 1}    1.90{col 50}{space 3}0.081{col 58}{space 4}-1.397883{col 71}{space 3} 20.68966
+{txt}{space 11}jel_m {c |}{col 18}{res}{space 2} 4.068157{col 30}{space 2} 18.65515{col 41}{space 1}    0.22{col 50}{space 3}0.831{col 58}{space 4}-36.57793{col 71}{space 3} 44.71424
+{txt}{space 11}jel_n {c |}{col 18}{res}{space 2} 15.15052{col 30}{space 2} 19.07493{col 41}{space 1}    0.79{col 50}{space 3}0.442{col 58}{space 4}-26.41019{col 71}{space 3} 56.71123
+{txt}{space 11}jel_o {c |}{col 18}{res}{space 2} 19.21735{col 30}{space 2} 7.199904{col 41}{space 1}    2.67{col 50}{space 3}0.020{col 58}{space 4} 3.530111{col 71}{space 3}  34.9046
+{txt}{space 11}jel_p {c |}{col 18}{res}{space 2}-98.97907{col 30}{space 2} 20.90054{col 41}{space 1}   -4.74{col 50}{space 3}0.000{col 58}{space 4}-144.5174{col 71}{space 3} -53.4407
+{txt}{space 11}jel_q {c |}{col 18}{res}{space 2}-12.57263{col 30}{space 2}   58.717{col 41}{space 1}   -0.21{col 50}{space 3}0.834{col 58}{space 4} -140.506{col 71}{space 3} 115.3607
+{txt}{space 11}jel_r {c |}{col 18}{res}{space 2}-29.62646{col 30}{space 2} 17.27775{col 41}{space 1}   -1.71{col 50}{space 3}0.112{col 58}{space 4}-67.27145{col 71}{space 3} 8.018528
+{txt}{space 11}jel_z {c |}{col 18}{res}{space 2}-10.65139{col 30}{space 2} 32.57367{col 41}{space 1}   -0.33{col 50}{space 3}0.749{col 58}{space 4}-81.62332{col 71}{space 3} 60.32055
+{txt}{space 11}_cons {c |}{col 18}{res}{space 2}  156.697{col 30}{space 2} 23.35083{col 41}{space 1}    6.71{col 50}{space 3}0.000{col 58}{space 4} 105.8199{col 71}{space 3} 207.5741
+{txt}{hline 17}{c BT}{hline 11}{hline 11}{hline 9}{hline 8}{hline 13}{hline 12}
+{res}
+{txt}Resampling replications ({res}1,022{txt})
+{hline 4}{c +}{hline 3} 1 {hline 3}{c +}{hline 3} 2 {hline 3}{c +}{hline 3} 3 {hline 3}{c +}{hline 3} 4 {hline 3}{c +}{hline 3} 5 
+..................................................    50
+..................................................   100
+..................................................   150
+..................................................   200
+..................................................   250
+..................................................   300
+..................................................   350
+..................................................   400
+..................................................   450
+..................................................   500
+..................................................   550
+..................................................   600
+..................................................   650
+..................................................   700
+..................................................   750
+..................................................   800
+..................................................   850
+..................................................   900
+..................................................   950
+.................................................. 1,000
+......................
+{err}Warning: 1% of the resampled realizations for _pm_1 are exactly identical to original value
+{p2colset 7 16 20 2}{...}
+
+{txt}{p2col :Command:}{res:regress hindex i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)}{p_end}
+{p2colset 9 16 20 2}{...}
+{p2col :_pm_1:}{res:_b[has_discussion]}{p_end}
+  res. var(s):  has_discussion
+   Resampling:  Permuting has_discussion
+Clust. var(s){res}:  group_main
+     {txt}Clusters{res}:  10
+{txt}Strata var(s){res}:  none
+       {txt}Strata{res}:  1
+
+{col 1}{text}{hline 13}{c TT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{col 1}{text}T           {col 14}{c |}     T(obs){col 27}      c{col 35}      n{col 43}  p=c/n{col 51}  SE(p){col 59}[95% Conf. Interval]
+{res}{col 1}{text}{hline 13}{c +}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+{space 7}_pm_1 {c |}{col 14}{result}{space 2} 17.35638{col 27}    220{col 35}   1022{col 43} 0.2153{col 51} 0.0129{col 59}  .190426{col 69}{space 1} .2417539
+{col 1}{text}{hline 13}{c BT}{hline 12}{hline 8}{hline 8}{hline 8}{hline 8}{hline 10}{hline 10}
+Note: Confidence interval is with respect to p=c/n.
+Note: c = #{|T| >= |T(obs)|}
+{res}{txt}
+{com}. 
+. ** Citation count (log-transformed)
+. eststo: qui regress ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year, cluster(group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui regress ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui regress ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z sjr, cluster(group)
+{txt}({res}est3{txt} stored)
+
+{com}. eststo: qui regress ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z i.journal_f, cluster(group)
+{txt}({res}est4{txt} stored)
+
+{com}. esttab using ./990_output/Tables/discussion_reg-citations, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2, labels("\textit{c -(}N{c )-}" "R$^{c -(}2{c )-}$")) ///
+>         wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Paper controls=num_pages" "Author controls=euclid_auth" "Group control=euclidmean_group" "Publication year FE=*pub_year*" "JEL categories=jel_*" "Journal control=sjr" "Journal FE=*journal_f*", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/discussion_reg-citations.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. 
+. * Robustness checks
+. ** log of journal quality measures
+. eststo: qui regress ln_sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui regress ln_sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui regress ln_avg_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{txt}({res}est3{txt} stored)
+
+{com}. eststo: qui regress ln_avg_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{txt}({res}est4{txt} stored)
+
+{com}. eststo: qui regress ln_hindex i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{txt}({res}est5{txt} stored)
+
+{com}. eststo: qui regress ln_hindex i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{txt}({res}est6{txt} stored)
+
+{com}. esttab using ./990_output/Tables/discussion_reg-journal-log, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2, labels("\textit{c -(}N{c )-}" "R$^{c -(}2{c )-}$")) ///
+>         wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Paper controls=num_pages" "Author controls=euclid_auth" "Group control=euclidmean_group" "JEL categories=jel_*", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/discussion_reg-journal-log.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. 
+. ** Negative Binomial citation
+. eststo: qui nbreg total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year, cluster(group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui nbreg total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui nbreg total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z sjr, cluster(group)
+{txt}({res}est3{txt} stored)
+
+{com}. esttab using ./990_output/Tables/discussion_reg-citations-negbin, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2_p aic, labels("\textit{c -(}N{c )-}" "Pseudo R$^{c -(}2{c )-}$" "AIC")) ///
+>         wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a lnalpha) ///
+>     indicate("Paper controls=num_pages" "Author controls=euclid_auth" "Group control=euclidmean_group" "Publication year FE=*pub_year*" "JEL categories=jel_*" "Journal control=sjr", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/discussion_reg-citations-negbin.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. 
+. ** asinh-transformed citation count
+. eststo: qui regress asinh_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year, cluster(group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui regress asinh_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z, cluster(group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui regress asinh_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year jel_c jel_d jel_e jel_f jel_g jel_h jel_i jel_j jel_k jel_k jel_l jel_m jel_n jel_o jel_p jel_q jel_r jel_z sjr, cluster(group)
+{txt}({res}est3{txt} stored)
+
+{com}. esttab using ./990_output/Tables/discussion_reg-citations-asinh, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2, labels("\textit{c -(}N{c )-}" "R$^{c -(}2{c )-}$")) ///
+>         wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Paper controls=num_pages" "Author controls=euclid_auth" "Group control=euclidmean_group" "Publication year FE=*pub_year*" "JEL categories=jel_*" "Journal control=sjr", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/discussion_reg-citations-asinh.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. 
+. ** Readability control
+. preserve
+{txt}
+{com}. drop if pres_gunningfog == .
+{txt}(265 observations deleted)
+
+{com}. eststo: qui logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, vce(cluster group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group pres_gunningfog, vce(cluster group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui regress sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{txt}({res}est3{txt} stored)
+
+{com}. eststo: qui regress sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group pres_gunningfog, cluster(group)
+{txt}({res}est4{txt} stored)
+
+{com}. eststo: qui regress ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year sjr, cluster(group)
+{txt}({res}est5{txt} stored)
+
+{com}. eststo: qui regress ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group pres_gunningfog i.pub_year sjr, cluster(group)
+{txt}({res}est6{txt} stored)
+
+{com}. esttab using ./990_output/Tables/discussion_reg-readability, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2 r2_p aic, labels("\textit{c -(}N{c )-}" "R$^{c -(}2{c )-}$" "Pseudo R$^{c -(}2{c )-}$" "AIC")) ///
+>         wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Paper controls=num_pages" "Author controls=euclid_auth" "Group control=euclidmean_group" "Publication year FE=*pub_year*" "Journal control=sjr", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/discussion_reg-readability.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. restore
+{txt}
+{com}. 
+. ** Monetary sample regressions
+. preserve
+{txt}
+{com}. keep if group_main == "ME" | group_main == "EFCE" | group_main == "EFEL" | group_main == "IFM"
+{txt}(315 observations deleted)
+
+{com}. 
+. eststo: qui logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, vce(cluster group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui regress sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group, cluster(group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui regress ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a has_discussion euclidmean_group i.pub_year sjr, cluster(group)
+{txt}({res}est3{txt} stored)
+
+{com}. esttab using ./990_output/Tables/discussion_reg-monetary, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2 r2_p aic, labels("\textit{c -(}N{c )-}" "R$^{c -(}2{c )-}$" "Pseudo R$^{c -(}2{c )-}$" "AIC")) ///
+>         wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Paper controls=num_pages" "Author controls=euclid_auth" "Group control=euclidmean_group" "Publication year FE=*pub_year*" "Journal control=sjr", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/discussion_reg-monetary.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. restore
+{txt}
+{com}. 
+. * Channel explorations
+. drop if experience_dis == .
+{txt}(246 observations deleted)
+
+{com}. 
+. ** Discussant type
+. eststo: qui logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d i.female_dis group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk, vce(cluster group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui reg sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d i.female_dis group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk, vce(cluster group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui reg ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d i.female_dis group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk sjr, vce(cluster group)
+{txt}({res}est3{txt} stored)
+
+{com}. esttab using ./990_output/Tables/type_reg-main, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2 r2_p aic, labels("\textit{c -(}N{c )-}" "R$^{c -(}2{c )-}$" "Pseudo R$^{c -(}2{c )-}$" "AIC")) ///
+>         substitute("=1" "") nobaselevels wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Group FE=*group*" "Paper controls=num_pages" "Author controls=euclid_auth" "Journal control=sjr", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/type_reg-main.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. 
+. ** Discussant status
+. eststo: qui logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d i.female_dis tilburg_rank_weighted_dis group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk, vce(cluster group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d i.female_dis i.practitioner_dis i.editor_dis group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk, vce(cluster group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui reg sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d i.female_dis tilburg_rank_weighted_dis group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk, vce(cluster group)
+{txt}({res}est3{txt} stored)
+
+{com}. eststo: qui reg sjr i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d i.female_dis i.practitioner_dis i.editor_dis group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk, vce(cluster group)
+{txt}({res}est4{txt} stored)
+
+{com}. eststo: qui reg ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d i.female_dis tilburg_rank_weighted_dis group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk sjr, vce(cluster group)
+{txt}({res}est5{txt} stored)
+
+{com}. eststo: qui reg ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d i.female_dis i.practitioner_dis i.editor_dis group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk sjr, vce(cluster group)
+{txt}({res}est6{txt} stored)
+
+{com}. esttab using ./990_output/Tables/type_reg-status, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2 r2_p aic, labels("\textit{c -(}N{c )-}" "R$^{c -(}2{c )-}$" "Pseudo R$^{c -(}2{c )-}$" "AIC")) ///
+>         substitute("=1" "") nobaselevels wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Group FE=*group*" "Paper controls=num_pages" "Author controls=euclid_auth" "Journal control=sjr", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/type_reg-status.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. 
+. ** Discussant Centrality
+. eststo: qui logit top i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk i.female_dis coauth_neighborhood_45_dis informal_neighborhood_45_dis, vce(cluster group)
+{txt}({res}est1{txt} stored)
+
+{com}. eststo: qui reg sjr ii.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk i.female_dis coauth_neighborhood_45_dis informal_neighborhood_45_dis, vce(cluster group)
+{txt}({res}est2{txt} stored)
+
+{com}. eststo: qui reg ln_total_citations i.num_auth num_pages age c.age#c.age euclid_auth i.statusmin_a i.statusmax_a euclid_dis i.status_d group_amre group_ap group_cf group_efce group_efel group_effe group_ifm group_me group_pere group_risk i.female_dis coauth_neighborhood_45_dis informal_neighborhood_45_dis sjr, vce(cluster group)
+{txt}({res}est3{txt} stored)
+
+{com}. esttab using ./990_output/Tables/type_reg-centrality, replace label ///
+>     alignment(D{c -(}.{c )-}{c -(}.{c )-}{c -(}-1{c )-}) p star(* 0.1 ** 0.05 *** 0.01) delimiter(_tab "&") booktabs ///
+>         nolegend nonote stats(N r2 r2_p aic, labels("\textit{c -(}N{c )-}" "R$^{c -(}2{c )-}$" "Pseudo R$^{c -(}2{c )-}$" "AIC")) ///
+>         substitute("=1" "") nobaselevels wrap varwidth(20) modelwidth(15) drop(*.num_auth *age* *.statusmin_a *.statusmax_a) ///
+>     indicate("Group FE=*group*" "Paper controls=num_pages" "Author controls=euclid_auth" "Journal control=sjr", labels("\multicolumn{c -(}1{c )-}{c -(}c{c )-}{c -(}$\checkmark${c )-}" ""))
+{res}{txt}(output written to {browse  `"./990_output/Tables/type_reg-centrality.tex"'})
+
+{com}. estimates clear
+{res}{txt}
+{com}. 
+. log close
+      {txt}name:  {res}<unnamed>
+       {txt}log:  {res}E:\PERSONS\Michael Rose\discussants\990_output\891_log.smcl
+  {txt}log type:  {res}smcl
+ {txt}closed on:  {res}14 May 2022, 21:46:16
+{txt}{.-}
+{smcl}
+{txt}{sf}{ul off}

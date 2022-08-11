@@ -1,0 +1,32 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{3}{D{.}{.}{-1}}}
+\toprule
+                    	&\multicolumn{1}{c}{(1)} 	&\multicolumn{1}{c}{(2)} 	&\multicolumn{1}{c}{(3)} \\
+                    	&\multicolumn{1}{c}{Total citations}	&\multicolumn{1}{c}{Total citations}	&\multicolumn{1}{c}{Total citations}\\
+\midrule
+Total citations     	&                        	&                        	&                        \\
+Discussion          	&          0.203         	&         0.0576         	&        -0.0289         \\
+                    	&        (0.121)         	&        (0.661)         	&        (0.849)         \\
+\addlinespace
+Constant            	&          3.829\sym{***}	&          3.860\sym{***}	&          3.854\sym{***}\\
+                    	&        (0.000)         	&        (0.000)         	&        (0.000)         \\
+\addlinespace
+Paper controls      	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Author controls     	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Group control       	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Publication year FE 	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+JEL categories      	&                        	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Journal control     	&                        	&                        	&\multicolumn{1}{c}{$\checkmark$}         \\
+\midrule
+\textit{N}          	&            596         	&            596         	&            576         \\
+Pseudo R$^{2}$      	&         0.0406         	&         0.0466         	&         0.0503         \\
+AIC                 	&         7033.5         	&         6989.6         	&         6756.1         \\
+\bottomrule
+\end{tabular}
+}

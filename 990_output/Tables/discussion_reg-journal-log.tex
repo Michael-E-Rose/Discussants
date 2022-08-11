@@ -1,0 +1,26 @@
+{
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+\begin{tabular}{l*{6}{D{.}{.}{-1}}}
+\toprule
+                    	&\multicolumn{1}{c}{(1)} 	&\multicolumn{1}{c}{(2)} 	&\multicolumn{1}{c}{(3)} 	&\multicolumn{1}{c}{(4)} 	&\multicolumn{1}{c}{(5)} 	&\multicolumn{1}{c}{(6)} \\
+                    	&\multicolumn{1}{c}{log(SJR)}	&\multicolumn{1}{c}{log(SJR)}	&\multicolumn{1}{c}{log(Avg. citations)}	&\multicolumn{1}{c}{log(Avg. citations)}	&\multicolumn{1}{c}{log(h-index)}	&\multicolumn{1}{c}{log(h-index)}\\
+\midrule
+Discussion          	&          0.279\sym{**} 	&          0.198         	&          0.320\sym{***}	&          0.202\sym{*}  	&          0.210\sym{***}	&          0.102         \\
+                    	&        (0.035)         	&        (0.177)         	&        (0.004)         	&        (0.068)         	&        (0.009)         	&        (0.321)         \\
+\addlinespace
+Constant            	&          0.899\sym{***}	&          1.128\sym{***}	&          0.256         	&          0.402\sym{**} 	&          4.848\sym{***}	&          5.056\sym{***}\\
+                    	&        (0.001)         	&        (0.000)         	&        (0.151)         	&        (0.049)         	&        (0.000)         	&        (0.000)         \\
+\addlinespace
+Paper controls      	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Author controls     	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+Group control       	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         	&\multicolumn{1}{c}{$\checkmark$}         \\
+\addlinespace
+JEL categories      	&                        	&\multicolumn{1}{c}{$\checkmark$}         	&                        	&\multicolumn{1}{c}{$\checkmark$}         	&                        	&\multicolumn{1}{c}{$\checkmark$}         \\
+\midrule
+\textit{N}          	&            576         	&            576         	&            576         	&            576         	&            576         	&            576         \\
+R$^{2}$             	&          0.181         	&          0.266         	&          0.200         	&          0.264         	&          0.121         	&          0.209         \\
+\bottomrule
+\end{tabular}
+}
