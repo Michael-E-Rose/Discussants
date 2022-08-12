@@ -1,4 +1,4 @@
 * [`discussants.csv`](discussants.csv) is the list of Scopus Author IDs for all discussants
-* [`unpublished_authors.csv`](unpublished_authors.csv) is the list of Scopus Author IDs for all authors whose papers did not get published
+* [`unpublished.csv`](unpublished.csv) is the list of Scopus Author IDs for all authors whose papers did not get published
 * [`journals.csv`](journals.csv) is the list of Scopus source ID for all journals that we use to build field-specific authors networks.  The list is based on Combes and Linnemer (2010): "[Inferring Missing Citations: A Quantitative Multi-Criteria Ranking of all Journals in Economics](CombesLinnemer2010_JournalRank.pdf)", HAL Working Paper 00520325. We take general journals and field-specific journals. For each of the subfields C, D, E, F, G, H, K, R as well as General there is a ranking table of which we take all journals that are rated C or higher. (Note: Scopus does not cover all journals all of the years.)
 
